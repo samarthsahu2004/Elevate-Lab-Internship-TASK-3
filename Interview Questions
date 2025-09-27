@@ -1,0 +1,142 @@
+1. What assumptions does linear regression make?
+For a linear regression model to be reliable and its results statistically valid, it must satisfy four key assumptions, often remembered by the acronym L.I.N.E.:
+
+L - Linearity: The relationship between the predictor variables (X) and the outcome variable (y) must be linear. You can't use a straight line to model a curved relationship. You can check this by plotting the residuals (errors) against the predicted values; a random scatter suggests linearity, while a clear pattern suggests it's violated.
+
+I - Independence: The errors (residuals) of the model must be independent of each other. This means the error of one prediction doesn't provide any information about the error of another. This is particularly important for time-series data where errors in one period can influence the next (a condition called autocorrelation).
+
+N - Normality: The errors (residuals) should be normally distributed. This doesn't mean the predictors or outcome have to be normal, but their errors must be. This is crucial for the validity of hypothesis tests and confidence intervals. This can be checked using a Q-Q plot or a histogram of the residuals.
+
+E - Equal Variance (Homoscedasticity): The errors must have a constant variance across all levels of the predictor variables. In other words, the spread of the errors should be consistent. The opposite is heteroscedasticity, where the error spread changes (e.g., the model is much less accurate for higher predicted values). This can be spotted in a residual plot where the points form a cone shape.
+
+2. How do you interpret the coefficients?
+Interpreting coefficients is key to understanding the model's story, but the interpretation differs slightly between simple and multiple regression.
+
+Intercept (β 0 ): This is the predicted value of the outcome variable (y) when all predictor variables (X) are zero. In many real-world scenarios, this is not practically meaningful (e.g., a house with zero square feet), but it's a necessary baseline for the model's equation.
+
+Simple Regression Coefficient (β 1 ): With only one predictor, the coefficient is straightforward. It represents the change in the outcome variable for a one-unit increase in the predictor variable.
+
+Multiple Regression Coefficients (β 1​,β 2, etc.): This is the more common and crucial interpretation. The coefficient for a specific predictor represents the change in the outcome variable for a one-unit increase in that predictor, holding all other predictors in the model constant. This "all else being equal" condition is vital for isolating the individual effect of each feature.
+
+Example: In a model predicting house prices, a coefficient of 250 for the area feature means that for each additional square foot of area, the price is predicted to increase by $250, assuming the number of bedrooms, bathrooms, and all other included features remain the same.
+
+3. What is R² score and its significance?
+The R-squared (R²) score, also known as the coefficient of determination, is a statistical metric that represents the proportion of the variance in the dependent variable (y) that can be explained by the independent variables (X) in the model.
+
+Significance: It's a measure of the model's "goodness-of-fit," scaled between 0 and 1 (or 0% to 100%).
+
+An R² of 0 means the model explains none of the variability in the outcome.
+
+An R² of 1 means the model explains all of the variability.
+
+An R² of 0.65 means that 65% of the variation in the outcome can be attributed to the features included in the model.
+
+A higher R² generally indicates a better fit. However, it has a key limitation: R² never decreases when you add more predictors to the model, even if they are completely useless. This can be misleading. For this reason, we often use Adjusted R², which penalizes the score for adding features that don't improve the model, making it a more reliable metric for comparing models with different numbers of predictors.
+
+4. When would you prefer MSE over MAE?
+Both Mean Squared Error (MSE) and Mean Absolute Error (MAE) are metrics used to measure the average error of a model.
+
+MAE is the average of the absolute differences between actual and predicted values.
+
+MSE is the average of the squared differences.
+
+The key difference is the squaring of the error term in MSE. This means that MSE penalizes large errors much more severely than MAE.
+
+You would prefer MSE when:
+
+Large errors are particularly bad. In a business context where a single large mistake is much more costly than several small ones (like forecasting for high-stakes finance or electricity demand), you'd want a model that is heavily penalized for these large errors.
+
+The data is clean and doesn't have significant outliers.
+
+You would prefer MAE when:
+
+Your data has outliers. Since MSE squares the errors, outliers can dominate the metric and skew the model. MAE is more robust to outliers because it treats all errors linearly.
+
+You want a metric that is directly interpretable in the original units of your target variable. (Though RMSE, the square root of MSE, also achieves this).
+
+5. How do you detect multicollinearity?
+Multicollinearity occurs when two or more predictor variables are highly correlated with each other, making it difficult for the model to isolate their individual effects.
+
+There are two primary methods to detect it:
+
+Correlation Matrix: This is the first step. Create a heatmap of the correlation coefficients for all pairs of predictor variables. Look for high values (e.g., an absolute value > 0.8). This is a quick way to spot pairwise collinearity but may miss more complex relationships.
+
+Variance Inflation Factor (VIF): This is the standard and more robust method. VIF measures how much the variance of a coefficient is inflated because of its linear relationship with other predictors.
+
+VIF = 1: No correlation.
+
+1 < VIF < 5: Moderate correlation, generally considered acceptable.
+
+VIF > 5 or 10: High correlation, indicating a problem that needs to be addressed (e.g., by removing one of the correlated features).
+
+6. What is the difference between simple and multiple regression?
+The difference lies in the number of independent (predictor) variables used.
+
+Simple Linear Regression uses one independent variable to predict a dependent variable. The relationship is modeled as a straight line on a 2D plane.
+
+Equation: y=β 
+0 +β 
+1
+​
+ x+ϵ
+
+Multiple Linear Regression uses two or more independent variables to predict a dependent variable. The relationship is modeled as a hyperplane in a multi-dimensional space.
+
+Equation: y=β 
+0
+​
+ +β 
+1
+​
+ x 
+1
+​
+ +β 
+2
+​
+ x 
+2
+​
+ +...+β 
+n
+​
+ x 
+n
+​
+ +ϵ
+
+The main practical difference is in the interpretation of the coefficients. In multiple regression, each coefficient represents the effect of its variable while holding all other variables constant.
+
+7. Can linear regression be used for classification?
+No, you shouldn't use linear regression for classification tasks. It is fundamentally designed for regression—predicting continuous numerical values.
+
+Using it for classification is problematic because:
+
+The output is unbounded. Linear regression outputs a continuous value, not a probability between 0 and 1. It can predict values like -0.5 or 1.5, which are meaningless as class probabilities.
+
+It implies a false relationship. If you label your classes 0, 1, and 2, the model assumes that the difference between class 0 and 1 is the same as between class 1 and 2, and that class 2 is "twice" class 1, which is usually incorrect.
+
+The appropriate linear model for classification is Logistic Regression, which uses a sigmoid function to map the output to a probability between 0 and 1.
+
+8. What happens if you violate regression assumptions?
+Violating the assumptions of linear regression means that the results and the statistical inferences you draw from them become unreliable. While the model might still produce predictions, you can't trust them.
+
+Violating Linearity: Your model is fundamentally misspecified. It will be biased and systematically under- or over-predict across the range of your data.
+
+Violating Independence: The standard errors of your coefficients will be underestimated. This makes your p-values artificially small and your confidence intervals too narrow, leading you to believe a variable is statistically significant when it's not.
+
+Violating Normality of Residuals: Your hypothesis tests (t-tests and F-tests) become unreliable. You can no longer trust the p-values or confidence intervals, especially with small sample sizes.
+
+Violating Homoscedasticity (Equal Variance): The estimates of the standard errors will be biased, again making your hypothesis tests and confidence intervals unreliable. The model may be more certain in its predictions for some value ranges than for others, but this won't be reflected correctly.
+
+
+
+
+
+
+
+
+
+
+
+
